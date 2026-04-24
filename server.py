@@ -9,16 +9,16 @@ connected_clients = set()
 
 
 class ChatWebSocketHandler(tornado.websocket.WebSocketHandler):
-    """Handler principal do WebSocket para o chat."""
+    #Handler principal do WebSocket para o chat.
 
     def check_origin(self, origin):
         # Permite conexões de qualquer origem 
         return True
 
     def open(self):
-        """Chamado quando um novo cliente se conecta."""
+        #Chamado quando um novo cliente se conecta.
         connected_clients.add(self)
-        print(f"[{self._timestamp()}] Novo cliente conectado. Total: {len(connected_clients)}")
+        print(f"[{self._timestamp()}] Novo cliente conectado. Total: {len(connected_clients)}")# log no terminal
 
         # Notifica todos sobre a entrada de um novo usuário
         self._broadcast({
@@ -37,9 +37,9 @@ class ChatWebSocketHandler(tornado.websocket.WebSocketHandler):
         }))
 
     def on_message(self, message):
-        """Chamado quando uma mensagem é recebida do cliente."""
+        #Chamado quando uma mensagem é recebida do cliente
         try:
-            data = json.loads(message)
+            data = json.loads(message) #transforma texto em objeto python
             msg_type = data.get("type", "message")
 
             if msg_type == "message":
@@ -63,7 +63,7 @@ class ChatWebSocketHandler(tornado.websocket.WebSocketHandler):
             print("Mensagem inválida recebida (não é JSON).")
 
     def on_close(self):
-        """Chamado quando um cliente se desconecta."""
+        #Chamado quando um cliente se desconecta.
         connected_clients.discard(self)
         print(f"[{self._timestamp()}] Cliente desconectado. Total: {len(connected_clients)}")
 
@@ -76,7 +76,7 @@ class ChatWebSocketHandler(tornado.websocket.WebSocketHandler):
         })
 
     def _broadcast(self, data, exclude=None):
-        """Envia uma mensagem para todos os clientes conectados."""
+        #Envia uma mensagem para todos os clientes conectados
         payload = json.dumps(data)
         for client in list(connected_clients):
             if client != exclude:
@@ -86,12 +86,12 @@ class ChatWebSocketHandler(tornado.websocket.WebSocketHandler):
                     connected_clients.discard(client)
 
     def _timestamp(self):
-        """Retorna o horário atual formatado."""
+        #Retorna o horário atual formatado
         return datetime.now().strftime("%H:%M:%S")
 
 
 class MainHandler(tornado.web.RequestHandler):
-    """Serve o arquivo HTML do cliente."""
+    #Serve o arquivo HTML do cliente
 
     def get(self):
         self.render("index.html")
