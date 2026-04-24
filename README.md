@@ -4,8 +4,8 @@ Aplicação de chat em tempo real desenvolvida com **Python**, **Tornado Framewo
 
 ## 👥 Integrantes do Grupo
 
-Luis Eduardo 
-Voese 
+- Luis Eduardo - RA 1134332
+- Voese - RA 
 
 ## 📋 Descrição
 
