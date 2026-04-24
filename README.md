@@ -37,8 +37,8 @@ Este projeto implementa um sistema de chat multiusuário em tempo real. O servid
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repositorio.git
-cd seu-repositorio
+git clone https://github.com/edumoraees/trab-websockets
+cd trab-websockets
 ```
 
 ### 2. Instale as dependências
