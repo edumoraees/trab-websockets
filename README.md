@@ -1,13 +1,13 @@
-# 💬 Chat em Tempo Real com WebSocket
+# Chat em Tempo Real com WebSocket
 
 Aplicação de chat em tempo real desenvolvida com **Python**, **Tornado Framework** e **WebSockets**, como parte do trabalho prático da disciplina de Computação Distribuida.
 
-## 👥 Integrantes do Grupo
+## Integrantes do Grupo
 
 - Luis Eduardo - RA 1134332
-- Voese - RA 
+- João Vitor Voese - RA 1135759
 
-## 📋 Descrição
+## Descrição
 
 Este projeto implementa um sistema de chat multiusuário em tempo real. O servidor é construído com o framework **Tornado**, que gerencia múltiplas conexões WebSocket simultâneas. O cliente é uma interface web em **HTML/JavaScript puro** que se comunica de forma bidirecional e persistente com o servidor.
 
@@ -20,19 +20,19 @@ Este projeto implementa um sistema de chat multiusuário em tempo real. O servid
 - Reconexão automática em caso de queda
 - Interface responsiva e moderna
 
-## 🛠️ Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 - Python 3.10+
 - Tornado Framework (servidor WebSocket)
 - HTML5 + JavaScript (cliente)
 - WebSocket Protocol (RFC 6455)
 
-## ⚙️ Requisitos
+## Requisitos
 
 - Python 3.10 ou superior
 - pip
 
-## 🚀 Instalação e Execução
+## Instalação e Execução
 
 ### 1. Clone o repositório
 
@@ -65,7 +65,7 @@ http://localhost:8888
 
 Para testar com múltiplos usuários, abra várias abas ou navegadores.
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 /
@@ -75,7 +75,7 @@ Para testar com múltiplos usuários, abra várias abas ou navegadores.
 └── README.md          # Este arquivo
 ```
 
-## 🔌 Funcionamento do WebSocket
+## Funcionamento do WebSocket
 
 ### Ciclo de vida da conexão
 
@@ -88,7 +88,7 @@ Para testar com múltiplos usuários, abra várias abas ou navegadores.
 
 O servidor mantém um `set` Python com todas as instâncias de `WebSocketHandler` ativas. Ao receber uma mensagem, itera sobre esse conjunto e envia para todos (broadcast). Conexões encerradas são removidas automaticamente.
 
-## 📡 Formato das Mensagens (JSON)
+## Formato das Mensagens (JSON)
 
 **Mensagem de chat (cliente → servidor):**
 ```json
