@@ -101,6 +101,7 @@ def make_app():
     return tornado.web.Application([
         (r"/", MainHandler),
         (r"/ws", ChatWebSocketHandler),
+        (r"/(.*)", tornado.web.StaticFileHandler, {"path": "."}),
     ], template_path=".")
 
 
