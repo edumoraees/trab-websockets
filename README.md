@@ -1,43 +1,219 @@
-# Chat em Tempo Real com WebSocket
+# Real-Time Chat with WebSockets
 
-Aplicação de chat em tempo real desenvolvida com **Python**, **Tornado Framework** e **WebSockets**, como parte do trabalho prático da disciplina de Computação Distribuida.
+Aplicação de **chat multiusuário em tempo real** desenvolvida com **Python, Tornado Framework e WebSockets**.
 
-## Integrantes do Grupo
+O projeto implementa comunicação bidirecional persistente entre navegador e servidor, permitindo múltiplos usuários conectados simultaneamente, envio instantâneo de mensagens, notificações de entrada e saída e reconexão automática.
 
-- Luis Eduardo - RA 1134332
-- João Vitor Voese - RA 1135759
+---
 
-## Descrição
+## Funcionalidades
 
-Este projeto implementa um sistema de chat multiusuário em tempo real. O servidor é construído com o framework **Tornado**, que gerencia múltiplas conexões WebSocket simultâneas. O cliente é uma interface web em **HTML/JavaScript puro** que se comunica de forma bidirecional e persistente com o servidor.
+* Entrada no chat com nome de usuário
+* Envio e recebimento de mensagens em tempo real
+* Comunicação bidirecional utilizando WebSockets
+* Suporte a múltiplos clientes conectados simultaneamente
+* Broadcast de mensagens para usuários ativos
+* Notificações de entrada e saída
+* Contador de usuários conectados
+* Reconexão automática em caso de perda de conexão
+* Troca de mensagens utilizando JSON
+* Interface web responsiva
 
-### Funcionalidades
+---
 
-- Entrada no chat com nome de usuário
-- Envio e recebimento de mensagens em tempo real
-- Notificações de entrada e saída de usuários
-- Contador de usuários conectados
-- Reconexão automática em caso de queda
-- Interface responsiva e moderna
+## Tecnologias utilizadas
 
-## Tecnologias Utilizadas
+### Backend
 
-- Python 3.10+
-- Tornado Framework (servidor WebSocket)
-- HTML5 + JavaScript (cliente)
-- WebSocket Protocol (RFC 6455)
+* Python 3.10+
+* Tornado Framework
+* WebSocket Protocol
 
-## Requisitos
+### Frontend
 
-- Python 3.10 ou superior
-- pip
+* HTML5
+* CSS3
+* JavaScript
 
-## Instalação e Execução
+### Comunicação
+
+* WebSockets
+* JSON
+
+---
+
+## Arquitetura
+
+```text
+Browser A ─┐
+Browser B ─┼──── WebSocket ────> Tornado Server
+Browser C ─┘                          │
+                                     │
+                                     ▼
+                                  Broadcast
+                                     │
+                    ┌────────────────┼────────────────┐
+                    ▼                ▼                ▼
+                Browser A        Browser B        Browser C
+```
+
+O servidor mantém as conexões WebSocket ativas e realiza o broadcast das mensagens recebidas para todos os clientes conectados.
+
+---
+
+## Como funciona
+
+### 1. Conexão
+
+O cliente inicia uma conexão com o servidor utilizando o protocolo WebSocket.
+
+Durante o handshake, a conexão HTTP é atualizada para WebSocket:
+
+```text
+HTTP Request
+     │
+     │ Upgrade: websocket
+     ▼
+Tornado Server
+     │
+     │ 101 Switching Protocols
+     ▼
+WebSocket Connection
+```
+
+Após a conexão ser estabelecida, cliente e servidor podem trocar mensagens continuamente sem a necessidade de criar uma nova requisição HTTP para cada envio.
+
+---
+
+### 2. Gerenciamento das conexões
+
+O servidor mantém um conjunto com as instâncias de clientes WebSocket conectados.
+
+Quando um novo cliente entra no chat:
+
+```text
+Cliente conecta
+      │
+      ▼
+on_open()
+      │
+      ▼
+Adicionado ao conjunto
+de conexões ativas
+```
+
+Quando o usuário fecha a conexão:
+
+```text
+Cliente desconecta
+      │
+      ▼
+on_close()
+      │
+      ▼
+Removido das conexões
+ativas
+```
+
+Os demais usuários também recebem uma notificação informando a entrada ou saída de participantes.
+
+---
+
+### 3. Envio de mensagens
+
+Quando uma mensagem é enviada:
+
+```text
+Cliente
+  │
+  │ JSON
+  ▼
+Servidor
+  │
+  │ on_message()
+  ▼
+Broadcast
+  │
+  ├── Cliente A
+  ├── Cliente B
+  └── Cliente C
+```
+
+O servidor recebe a mensagem e a encaminha para todos os clientes atualmente conectados.
+
+---
+
+## Formato das mensagens
+
+As mensagens são transmitidas utilizando **JSON**.
+
+### Mensagem enviada pelo cliente
+
+```json
+{
+  "type": "message",
+  "username": "João",
+  "text": "Olá!"
+}
+```
+
+### Mensagem enviada pelo servidor
+
+```json
+{
+  "type": "message",
+  "username": "João",
+  "text": "Olá!",
+  "timestamp": "14:32:10"
+}
+```
+
+### Mensagem de sistema
+
+```json
+{
+  "type": "system",
+  "message": "Um novo usuário entrou no chat.",
+  "users": 3,
+  "timestamp": "14:32:10"
+}
+```
+
+---
+
+## Estrutura do projeto
+
+```text
+trab-websockets/
+├── server.py
+├── index.html
+├── script.js
+├── style.css
+├── requirements.txt
+└── README.md
+```
+
+### Principais arquivos
+
+* `server.py` — servidor HTTP/WebSocket desenvolvido com Tornado
+* `index.html` — estrutura da interface do chat
+* `script.js` — conexão WebSocket e lógica do cliente
+* `style.css` — estilização da interface
+* `requirements.txt` — dependências Python do projeto
+
+---
+
+## Instalação
 
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/edumoraees/trab-websockets
+git clone https://github.com/edumoraees/trab-websockets.git
+```
+
+Entre na pasta:
+
+```bash
 cd trab-websockets
 ```
 
@@ -53,54 +229,76 @@ pip install -r requirements.txt
 python server.py
 ```
 
-O servidor iniciará na porta **8888**.
+O servidor será iniciado na porta:
 
-### 4. Acesse o chat
-
-Abra o navegador e acesse:
-
+```text
+8888
 ```
+
+---
+
+## Executando o chat
+
+Com o servidor iniciado, acesse no navegador:
+
+```text
 http://localhost:8888
 ```
 
-Para testar com múltiplos usuários, abra várias abas ou navegadores.
+Para simular múltiplos usuários, abra o endereço em diferentes abas ou navegadores.
 
-## Estrutura do Projeto
+---
 
-```
-/
-├── server.py          # Servidor WebSocket com Tornado
-├── index.html         # Interface web do cliente
-├── requirements.txt   # Dependências Python
-└── README.md          # Este arquivo
-```
+## Ciclo de vida do WebSocket
 
-## Funcionamento do WebSocket
+O servidor utiliza os principais eventos do `WebSocketHandler`:
 
-### Ciclo de vida da conexão
+### `open`
 
-1. **Handshake HTTP → WebSocket**: o cliente envia uma requisição HTTP com `Upgrade: websocket`, e o servidor responde com `101 Switching Protocols`.
-2. **`on_open`**: chamado quando a conexão é estabelecida. O cliente é adicionado ao conjunto de conexões ativas.
-3. **`on_message`**: chamado a cada mensagem recebida. O servidor faz broadcast para todos os clientes conectados.
-4. **`on_close`**: chamado quando a conexão é encerrada. O cliente é removido do conjunto e os demais são notificados.
+Executado quando uma nova conexão é estabelecida.
 
-### Gerenciamento de múltiplos clientes
+O cliente passa a fazer parte do conjunto de conexões ativas.
 
-O servidor mantém um `set` Python com todas as instâncias de `WebSocketHandler` ativas. Ao receber uma mensagem, itera sobre esse conjunto e envia para todos (broadcast). Conexões encerradas são removidas automaticamente.
+### `on_message`
 
-## Formato das Mensagens (JSON)
+Executado sempre que uma mensagem é recebida.
 
-**Mensagem de chat (cliente → servidor):**
-```json
-{ "type": "message", "username": "João", "text": "Olá!" }
-```
+O servidor processa a mensagem e realiza o broadcast para os clientes conectados.
 
-**Broadcast para clientes (servidor → todos):**
-```json
-{ "type": "message", "username": "João", "text": "Olá!", "timestamp": "14:32:10" }
-```
+### `on_close`
 
-**Mensagem de sistema:**
-```json
-{ "type": "system", "message": "Um novo usuário entrou no chat.", "users": 3, "timestamp": "14:32:10" }
-```
+Executado quando uma conexão é encerrada.
+
+O cliente é removido do conjunto de conexões e os demais participantes são notificados.
+
+---
+
+## Conceitos aplicados
+
+O projeto explora conceitos relacionados a:
+
+* Sistemas distribuídos
+* Comunicação cliente-servidor
+* Comunicação bidirecional
+* Conexões persistentes
+* WebSockets
+* Programação orientada a eventos
+* Broadcast de mensagens
+* Concorrência de conexões
+* Serialização de dados com JSON
+* Aplicações em tempo real
+
+---
+
+## Contexto acadêmico
+
+Projeto desenvolvido como trabalho prático da disciplina de **Computação Distribuída**.
+
+### Integrantes
+
+* Luis Eduardo — RA 1134332
+* João Vitor Voese — RA 1135759
+
+---
+
+
